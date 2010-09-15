@@ -7,8 +7,15 @@ It relies on the ``migrate`` egg for the ``diff`` and ``applyModel`` functions, 
 
 *It is most useful when rapidly developing / prototyping a Pylons application.*
 
-Setup
------
+Installation of required modules
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+easy_install SQLAlchemy
+easy_install sqlalchemy-migrate
+
+
+Setup of MYPROKJ .INI files and model meta files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1. Within the Pylons .INI file, it looks for a section called [app] *(the typical value is [app:main])*
 
