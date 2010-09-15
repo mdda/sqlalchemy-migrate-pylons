@@ -65,6 +65,10 @@ Known Issues
 ------------
 * Changing a model from ``nullable=True`` to ``nullable=False`` can be a problem, since the migrate package doesn't seem to understand ``default=''`` 
 
-Please let me know if there are any other problems.
+* The script is dependent on sqlalchemy-migrate, so could be incorporated into that package
+
+* OTOH, it would probably sit better as a Paster-Pylons plug-in
+
+* Please let me know if there are any other problems.
 
 **As always : Back up your data before doing a migrate.**
