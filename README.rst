@@ -27,7 +27,7 @@ Where the file model/meta.py contains the following : ::
     # The declarative DataBase base Object
     Base = declarative_base(metadata=metadata)
 
-Syntax  ::
+Syntax 
 ------
 
     (python-local) $ python sqlalchemy-migrate-pylons.py --help
@@ -42,8 +42,20 @@ Syntax  ::
 
 Normal usage
 ------------
+
 1. To check what needs to be changed: 
-``python sqlalchemy-migrate-pylons.py development.ini`` 
+
+    ``python sqlalchemy-migrate-pylons.py development.ini`` 
 
 2. To implement the changes and report back:
-``python sqlalchemy-migrate-pylons.py --commit development.ini`` 
+
+    ``python sqlalchemy-migrate-pylons.py --commit development.ini`` 
+
+
+Known Issues
+------------
+* Changing a model from 'nullable=True' to 'nullable=False' can be a problem, since the migrate package doesn't seem to understand ``default=''`` 
+
+Please let me know if there are any other problems.
+
+As always : Back up your data before doing a migrate.
