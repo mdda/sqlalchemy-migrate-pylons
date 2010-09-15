@@ -21,7 +21,7 @@ Setup
     ``migrate.metadata = MYPROJ.model.meta:metadata``
  
  
-Where the file model/meta.py contains the following : ::
+Where the file MYPROJ/model/meta.py contains the following : ::
 
     from sqlalchemy import schema
     metadata = schema.MetaData()
