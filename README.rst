@@ -5,6 +5,8 @@ This simple script pulls in the relavant database and model parameters from pylo
 
 It relies on the ``migrate`` egg for the ``diff`` and ``applyModel`` functions, and also makes use of the ConfigParser embedded in ``paste.deploy.loadwsgi``.
 
+*It is most useful when rapidly developing / prototyping a Pylons application.*
+
 Setup
 -----
 
@@ -54,8 +56,8 @@ Normal usage
 
 Known Issues
 ------------
-* Changing a model from 'nullable=True' to 'nullable=False' can be a problem, since the migrate package doesn't seem to understand ``default=''`` 
+* Changing a model from ``nullable=True`` to ``nullable=False`` can be a problem, since the migrate package doesn't seem to understand ``default=''`` 
 
 Please let me know if there are any other problems.
 
-As always : Back up your data before doing a migrate.
+**As always : Back up your data before doing a migrate.**
