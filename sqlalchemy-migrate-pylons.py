@@ -5,6 +5,9 @@ import os
 
 from sqlalchemy.engine import Engine
 
+#TEST
+import sqlalchemy
+
 from migrate.versioning import genmodel, schemadiff
 from migrate.versioning.util import load_model, construct_engine #, with_engine
 
@@ -19,8 +22,8 @@ from paste.deploy.loadwsgi import NicerConfigParser
 _debug_messages=False
 
 # @with_engine
-def update_pylons_db_from_model(url, model, commit=False):
-    """update_pylons_db_from_model URL MODEL COMMIT
+def update_pylons_db_from_model(url, model_str, commit=False):
+    """update_pylons_db_from_model URL MODEL_STR COMMIT
 
     Modify the database to match the structure of the current Pylons
     model. 
@@ -38,14 +41,22 @@ def update_pylons_db_from_model(url, model, commit=False):
     if _debug_messages:
         print "sqlalchemy-migrate-pylons : engine created"
     
-    model = load_model(model)
+    model = load_model(model_str)
     if _debug_messages:
-        print "sqlalchemy-migrate-pylons : model loaded"
+        print "sqlalchemy-migrate-pylons : model loaded from model_str"
+    
+    #model.init_model(engine)
     
     diff = schemadiff.getDiffOfModelAgainstDatabase(model, engine)
     print "\n====== sqlalchemy-migrate-pylons : Model vs. Database ======\n", diff, "\n"
     
     if commit:
+#        genmodel.ModelGenerator(diff).applyModel()
+        print "\n Engine : ", diff.conn.engine, "\n"
+
+        print "\n Meta Internal: ", model.metadata, "\n"
+        print "\n Meta Migrate : ", sqlalchemy.MetaData(diff.conn.engine), "\n"
+        
         genmodel.ModelGenerator(diff).applyModel()
         print "====== sqlalchemy-migrate-pylons : Database Migrated ======\n"
 
@@ -107,7 +118,7 @@ def update_from_ini(ini_file, app, commit):
     metadata = schema.MetaData()
     
     # The declarative DataBase base Object
-    Base= declarative_base(metadata=metadata)
+    Base = declarative_base(metadata=metadata)
     ``
     """
     global _debug_messages
