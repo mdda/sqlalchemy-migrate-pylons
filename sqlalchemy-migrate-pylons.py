@@ -8,7 +8,7 @@ from sqlalchemy.engine import Engine
 #TEST
 import sqlalchemy
 
-from migrate.versioning import genmodel, schema
+from migrate.versioning import genmodel, schemadiff
 from migrate.versioning.util import load_model, construct_engine #, with_engine
 
 from paste.deploy.loadwsgi import NicerConfigParser
@@ -47,7 +47,7 @@ def update_pylons_db_from_model(url, model_str, commit=False):
     
     #model.init_model(engine)
     
-    diff = schema.getDiffOfModelAgainstDatabase(model, engine)
+    diff = schemadiff.getDiffOfModelAgainstDatabase(model, engine)
     print "\n====== sqlalchemy-migrate-pylons : Model vs. Database ======\n", diff, "\n"
     
     if commit:
@@ -72,7 +72,7 @@ def update_pylons_db_from_model(url, model_str, commit=False):
         
         print "====== sqlalchemy-migrate-pylons : Database Migrated ======\n"
 
-        diff = schema.getDiffOfModelAgainstDatabase(model, engine)
+        diff = schemadiff.getDiffOfModelAgainstDatabase(model, engine)
         print "\n====== sqlalchemy-migrate-pylons : Model vs. Database (after migration) ======\n", diff, "\n"
         
     if isinstance(engine, Engine):
