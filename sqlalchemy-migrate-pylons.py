@@ -11,9 +11,9 @@ from sqlalchemy import schema
 
 from sqlalchemy.ext.declarative import declarative_base
 
-
 from migrate.versioning import genmodel
 from migrate.versioning import schemadiff
+
 from migrate.versioning.util import load_model, construct_engine #, with_engine
 
 from paste.deploy.loadwsgi import NicerConfigParser
