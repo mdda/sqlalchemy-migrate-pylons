@@ -7,8 +7,13 @@ from sqlalchemy.engine import Engine
 
 #TEST
 import sqlalchemy
+from sqlalchemy import schema
 
-from migrate.versioning import genmodel, schema
+from sqlalchemy.ext.declarative import declarative_base
+
+
+from migrate.versioning import genmodel
+from migrate.versioning import schemadiff
 from migrate.versioning.util import load_model, construct_engine #, with_engine
 
 from paste.deploy.loadwsgi import NicerConfigParser
@@ -41,29 +46,50 @@ def update_pylons_db_from_model(url, model_str, commit=False):
     if _debug_messages:
         print "sqlalchemy-migrate-pylons : engine created"
     
-    model = load_model(model_str)
+    
+    model_metadata = load_model(model_str)
     if _debug_messages:
-        print "sqlalchemy-migrate-pylons : model loaded from model_str"
+        print "sqlalchemy-migrate-pylons : model metadata loaded from model_str"
     
-    #model.init_model(engine)
+    #schema.MetaData(engine).bind=model_metadata
     
-    diff = schema.getDiffOfModelAgainstDatabase(model, engine)
+    #print " Meta Internal: ", model.metadata, "\n"
+    #print " Meta Migrate : ", sqlalchemy.MetaData(engine), "\n"
+    #model.metadata=sqlalchemy.MetaData(engine)
+    #model_metadata = declarative_base(metadata=sqlalchemy.MetaData(engine))
+    
+    #model_metadata.DBsession.configure(bind=engine, autocommit=False)
+    #model_metadata.engine = engine
+    
+    #model_metadata.reflect(bind=engine)
+    
+    #declarative_base(metadata=model_metadata)
+    #sqlalchemy.MetaData(engine).bind = engine
+    
+    diff = schemadiff.getDiffOfModelAgainstDatabase(model_metadata, engine)
     print "\n====== sqlalchemy-migrate-pylons : Model vs. Database ======\n", diff, "\n"
     
     if commit:
 #        genmodel.ModelGenerator(diff).applyModel()
 #        print "\n Engine in Diffs : ", diff.conn.engine, "\n"
 
-#        print " Meta Internal: ", model.metadata, "\n"
-#        print " Meta Migrate : ", sqlalchemy.MetaData(diff.conn.engine), "\n"
+        #print " Meta Internal: ", model.session, "\n"
+        #print " Meta Migrate : ", sqlalchemy.MetaData(diff.conn.engine), "\n"
         
         #print "MISSING : ", diff.tablesMissingInDatabase
         #print "MISSING : ", sqlalchemy.sql.util.sort_tables(diff.tablesMissingInDatabase)
         
+        #meta = model.metadata 
+        #sqlalchemy.MetaData(diff.conn.engine).bind = engine
+        #meta.DBsession.configure(bind=engine, autocommit=False)
+                
         diff.tablesMissingInDatabase = sqlalchemy.sql.util.sort_tables(diff.tablesMissingInDatabase)
         print "====== sqlalchemy-migrate-pylons : Table Creation order : ======\n", diff, "\n"
     
+        #sqlalchemy.MetaData(engine).bind = engine
         newmodel = genmodel.ModelGenerator(diff, declarative=True)
+        #newmodel.reflect(bind=engine)
+        
         print "====== sqlalchemy-migrate-pylons : Different Model created ======\n"
         print " New Model (in Python): \n\n", newmodel.toUpgradeDowngradePython()[0], "\n"   # Show the Declarations 
         print "# Upgrade Code :\n", newmodel.toUpgradeDowngradePython()[1], "\n"   # Show the Upgrade code
@@ -72,7 +98,7 @@ def update_pylons_db_from_model(url, model_str, commit=False):
         
         print "====== sqlalchemy-migrate-pylons : Database Migrated ======\n"
 
-        diff = schema.getDiffOfModelAgainstDatabase(model, engine)
+        diff = schemadiff.getDiffOfModelAgainstDatabase(model_metadata, engine)
         print "\n====== sqlalchemy-migrate-pylons : Model vs. Database (after migration) ======\n", diff, "\n"
         
     if isinstance(engine, Engine):
@@ -153,13 +179,13 @@ def update_from_ini(ini_file, app, commit):
 #    model_egg = app_main['use']
 #    model = model_egg.replace('egg:', '') + '.model.meta:metadata'
     
-    model = app_main['migrate.metadata']
+    model_metadata = app_main['migrate.metadata']
     
     if _debug_messages:
         print "url   = '%s'" % url
-        print "model = '%s'" % model
+        print "model = '%s'" % model_metadata
     
-    update_pylons_db_from_model(url, model, commit)
+    update_pylons_db_from_model(url, model_metadata, commit)
     
 
 
