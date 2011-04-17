@@ -165,7 +165,7 @@ def update_from_ini(ini_file, app, commit):
 
 def main():
     parser = optparse.OptionParser(usage="%prog [options] STANDALONE.ini ")
-    parser.add_option("-a", "--app", action="store_true", dest="app", help="section to parse in ini file (default=%default)", default='app:main')
+    parser.add_option("-a", "--app", action="store", dest="app", help="section to parse in ini file (default=%default)", default='app:main')
     parser.add_option("-c", "--commit", action="store_true", dest="commit", help="Use diffs to update database (default=%default)", default=False)
     parser.add_option("-v", "--verbose", dest="verbose", action="store_true", help="Show debug messages")
 
