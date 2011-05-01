@@ -83,16 +83,23 @@ def update_pylons_db_from_model(url, model_str, commit=False):
         #sqlalchemy.MetaData(diff.conn.engine).bind = engine
         #meta.DBsession.configure(bind=engine, autocommit=False)
                 
-        diff.tablesMissingInDatabase = sqlalchemy.sql.util.sort_tables(diff.tablesMissingInDatabase)
+	if hasattr(diff, 'tablesMissingInDatabase'):
+		diff.tablesMissingInDatabase = sqlalchemy.sql.util.sort_tables(diff.tablesMissingInDatabase)
         print "====== sqlalchemy-migrate-pylons : Table Creation order : ======\n", diff, "\n"
     
         #sqlalchemy.MetaData(engine).bind = engine
-        newmodel = genmodel.ModelGenerator(diff, declarative=True)
+	
+	## Oldrelease...
+        #newmodel = genmodel.ModelGenerator(diff, declarative=True)
+	
+	# This is a change for new release...
+        newmodel = genmodel.ModelGenerator(diff, engine, declarative=True)
         #newmodel.reflect(bind=engine)
         
-        print "====== sqlalchemy-migrate-pylons : Different Model created ======\n"
-        print " New Model (in Python): \n\n", newmodel.toUpgradeDowngradePython()[0], "\n"   # Show the Declarations 
-        print "# Upgrade Code :\n", newmodel.toUpgradeDowngradePython()[1], "\n"   # Show the Upgrade code
+	## Oldrelease...
+        #print "====== sqlalchemy-migrate-pylons : Different Model created ======\n"
+        #print " New Model (in Python): \n\n", newmodel.toUpgradeDowngradePython()[0], "\n"   # Show the Declarations 
+        #print "# Upgrade Code :\n", newmodel.toUpgradeDowngradePython()[1], "\n"   # Show the Upgrade code
         
         newmodel.applyModel()
         
