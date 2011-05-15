@@ -76,30 +76,32 @@ def update_pylons_db_from_model(url, model_str, commit=False):
         #print " Meta Internal: ", model.session, "\n"
         #print " Meta Migrate : ", sqlalchemy.MetaData(diff.conn.engine), "\n"
         
-        #print "MISSING : ", diff.tablesMissingInDatabase
-        #print "MISSING : ", sqlalchemy.sql.util.sort_tables(diff.tablesMissingInDatabase)
-        
         #meta = model.metadata 
         #sqlalchemy.MetaData(diff.conn.engine).bind = engine
         #meta.DBsession.configure(bind=engine, autocommit=False)
                 
-	if hasattr(diff, 'tablesMissingInDatabase'):
-		diff.tablesMissingInDatabase = sqlalchemy.sql.util.sort_tables(diff.tablesMissingInDatabase)
-        print "====== sqlalchemy-migrate-pylons : Table Creation order : ======\n", diff, "\n"
+        if hasattr(diff, 'tablesMissingInDatabase'):
+            print "MISSING : ", diff.tablesMissingInDatabase
+            print "MISSING : ", sqlalchemy.sql.util.sort_tables(diff.tablesMissingInDatabase)
+        
+            diff.tablesMissingInDatabase = sqlalchemy.sql.util.sort_tables(diff.tablesMissingInDatabase)
+            print "====== sqlalchemy-migrate-pylons : Table Creation order : ======\n", diff, "\n"
     
         #sqlalchemy.MetaData(engine).bind = engine
-	
-	## Oldrelease...
-        #newmodel = genmodel.ModelGenerator(diff, declarative=True)
-	
-	# This is a change for new release...
-        newmodel = genmodel.ModelGenerator(diff, engine, declarative=True)
-        #newmodel.reflect(bind=engine)
+
+        if hasattr(diff, 'tablesMissingInDatabase'):
+            ## Oldrelease...
+            newmodel = genmodel.ModelGenerator(diff, declarative=True)
+            #newmodel.reflect(bind=engine)
+        else:
+            # This is a change for new release...
+            newmodel = genmodel.ModelGenerator(diff, engine, declarative=True)
         
-	## Oldrelease...
-        #print "====== sqlalchemy-migrate-pylons : Different Model created ======\n"
-        #print " New Model (in Python): \n\n", newmodel.toUpgradeDowngradePython()[0], "\n"   # Show the Declarations 
-        #print "# Upgrade Code :\n", newmodel.toUpgradeDowngradePython()[1], "\n"   # Show the Upgrade code
+        if hasattr(diff, 'tablesMissingInDatabase'):
+            ## Oldrelease...
+            print "====== sqlalchemy-migrate-pylons : Different Model created ======\n"
+            print " New Model (in Python): \n\n", newmodel.toUpgradeDowngradePython()[0], "\n"   # Show the Declarations 
+            print "# Upgrade Code :\n", newmodel.toUpgradeDowngradePython()[1], "\n"   # Show the Upgrade code
         
         newmodel.applyModel()
         
